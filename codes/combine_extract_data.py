@@ -47,9 +47,24 @@ def dump_to_csv(df, file_name, file_path=OUTPUT_FILE_PATH):
 
 
 if __name__ == '__main__':
+    # ## ========== 提取订单OD信息 ==========
+    # # 选择所需要的字段，主要是4类：位置，距离，时间，时长，
+    # target_columns = ['order_id','start_dest_distance','arrive_time','departure_time',
+    #                   'normal_time','dest_lng','dest_lat','starting_lng','starting_lat','month','day']
+
+    # # 选择要合并的文件(用后缀数字表示)，一共8个文件
+    # merge_file_list = [1,2,3,4,5,6,7,8]
+
+    # extract_data = merge_extract_data(merge_file_list, target_columns)
+    # print(extract_data.shape)
+    # print(extract_data.head())
+
+    # # 导出至csv文件
+    # dump_to_csv(extract_data, 'extracted_11_features_of_merged_data')
+
+    ## ========== 提取类型信息，订单类型 ==========
     # 选择所需要的字段，主要是4类：位置，距离，时间，时长，
-    target_columns = ['order_id','start_dest_distance','arrive_time','departure_time',
-                      'normal_time','dest_lng','dest_lat','starting_lng','starting_lat','month','day']
+    target_columns = ['order_id','product_id','type','combo_type','traffic_type','pre_total_fee']
 
     # 选择要合并的文件(用后缀数字表示)，一共8个文件
     merge_file_list = [1,2,3,4,5,6,7,8]
@@ -59,4 +74,4 @@ if __name__ == '__main__':
     print(extract_data.head())
 
     # 导出至csv文件
-    dump_to_csv(extract_data, 'extracted_11_features_of_merged_data')
+    dump_to_csv(extract_data, 'extracted_6_type_features_of_merged_data')

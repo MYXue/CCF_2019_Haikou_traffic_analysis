@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*
 """
 2019-10-05
-作图及保存
+加载数据的工具函数
 """
 
 DATA_PATH = "D:/CCF2019/data/processed_data/"
@@ -13,6 +13,7 @@ POI_POSITION_DIR = 'D:/CCF2019/data/' + 'POI_lng_lat.csv'
 import datetime
 import numpy as np
 import pandas as pd
+from collections import Counter
 # pandas打印设置
 # 显示所有列
 pd.set_option('display.max_columns', None)
@@ -74,8 +75,11 @@ def load_data_of(file=FILTERED_DATA, columns=None, dates=None, time_interval=Non
 
 
 def select_df_of(df, dates=None, time_interval=None):
+    '''
+    这里是根据读取的df的时间区间直接提取，没有做时间的矫正
+    '''
     if dates == None:
-        dates = ['2017-05-01', '2017-11-01']
+        dates = ['2017-05-01', '2017-10-31']
     if time_interval == None:
         time_interval = [0,24]
 
@@ -148,9 +152,9 @@ if __name__ == '__main__':
     # print(df.columns.values)
     # print(df.shape)
 
-    df = load_data_of(rows=10)
+    df = load_data(rows=10)
+    df['departure_time'] = df['departure_time'].apply(parse_time)
     print(df)
-
 
 
 

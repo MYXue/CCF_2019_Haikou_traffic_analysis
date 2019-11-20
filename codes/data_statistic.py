@@ -4,6 +4,7 @@
 对每一天及每小时的数据量进行统计
 """
 import pandas as pd
+import math
 from util_data_load_dump import load_data_of
 
 def select_data_of_date(df):
@@ -46,6 +47,23 @@ def count_of_days(df):
         hourCount_of_days.append(hour_count_list)
         print(date.strftime('%m/%d') + ' done')
     return date_list, daycount_list, hourCount_of_days
+
+
+def gcj02_to_bd09(lng, lat):
+    """
+    火星坐标系(GCJ-02)转百度坐标系(BD-09)
+    谷歌、高德——>百度
+    :param lng:火星坐标经度
+    :param lat:火星坐标纬度
+    :return: bd_lng, bd_lat
+    """
+
+    x_pi = 3.14159265358979324 * 3000.0 / 180.0
+    z = math.sqrt(lng * lng + lat * lat) + 0.00002 * math.sin(lat * x_pi)
+    theta = math.atan2(lat, lng) + 0.000003 * math.cos(lng * x_pi)
+    bd_lng = z * math.cos(theta) + 0.0065
+    bd_lat = z * math.sin(theta) + 0.006
+    return bd_lng, bd_lat
 
 
 if __name__ == '__main__':
