@@ -14,6 +14,7 @@ import json
 from pyecharts.charts import BMap
 from pyecharts import options as opts
 from pyecharts.globals import BMapType, ChartType, ThemeType
+from map_style import get_map_style
 Baidu_AK = "EHuurxP38XIGCpLjqVP0cgze5vErTzz6"
 
 def get_index_of_postion(df):
@@ -43,71 +44,72 @@ def get_position_count(df):
 
     return departure_count, arrive_count
 
-
-def draw_heatmap(index_lngLat, index_value):
-    def bmap_heatmap() -> BMap:
-        c = (
-            BMap(init_opts = opts.InitOpts(theme = "white", width="800px", height="600px"))
-            .add_schema(baidu_ak=Baidu_AK, center=[110.3131940000, 20.0274250000], zoom=13)  #缩放比例12-14之间可行
-            .set_global_opts(
-                title_opts=opts.TitleOpts(title="09/20 17:00-19:00"),  # 更改title====================
-                visualmap_opts=opts.VisualMapOpts(pos_top='5%', pos_right='5%')
-            )
+def bmap_heatmap(index_lngLat, index_value, title='', width="1000px", height="600px") -> BMap:
+    c = (
+        BMap(init_opts = opts.InitOpts(theme = "white", width=width, height=height))
+        # .add_schema(baidu_ak=Baidu_AK, center=[110.3131940000, 20.0274250000], zoom=13, map_style=get_map_style())  #缩放比例12-14之间可行
+        .add_schema(baidu_ak=Baidu_AK, center=[110.3131940000, 20.0274250000], zoom=13)
+        .set_global_opts(
+            title_opts=opts.TitleOpts(title=title), 
+            visualmap_opts=opts.VisualMapOpts(pos_top='5%', pos_right='5%')
         )
-        # 增加坐标点信息
-        for key, value in index_lngLat.items():
-            c.add_coordinate(key, value[0], value[1])
+    )
+    # 增加坐标点信息
+    for key, value in index_lngLat.items():
+        c.add_coordinate(key, value[0], value[1])
 
-       # 热力图
-        c.add(
-                "出发地热力图",
-                index_value[0],
-                type_="heatmap",
-                label_opts=opts.LabelOpts(formatter="{b}"),
-            )
+   # 热力图
+    c.add(
+            "出发地热力图",
+            index_value[0],
+            type_="heatmap",
+            label_opts=opts.LabelOpts(formatter="{b}"),
+        )
 
-        # 点图
-        c.add(
-                "出发地位置",
-                index_value[0],
-                type_="scatter",
-                symbol_size=3,
-                # color='rgb(1, 1, 1)',
-                # itemstyle_opts= opts.ItemStyleOpts(color='rgb(1, 1, 1)'),
-                label_opts=opts.LabelOpts(is_show=False),
-            )
-        # 热力图
-        c.add(
-                "到达地热力图",
-                index_value[1],
-                type_="heatmap",
-                label_opts=opts.LabelOpts(formatter="{b}"),
-            )
+    # 点图
+    c.add(
+            "出发地位置",
+            index_value[0],
+            type_="scatter",
+            symbol_size=3,
+            # color='rgb(1, 1, 1)',
+            # itemstyle_opts= opts.ItemStyleOpts(color='rgb(1, 1, 1)'),
+            label_opts=opts.LabelOpts(is_show=False),
+        )
+    # 热力图
+    c.add(
+            "到达地热力图",
+            index_value[1],
+            type_="heatmap",
+            label_opts=opts.LabelOpts(formatter="{b}"),
+        )
 
-         # 点图
-        c.add(
-                "到达地位置",
-                index_value[1],
-                type_="scatter",
-                symbol_size=3,
-                label_opts=opts.LabelOpts(is_show=False),
-            )
+     # 点图
+    c.add(
+            "到达地位置",
+            index_value[1],
+            type_="scatter",
+            symbol_size=3,
+            label_opts=opts.LabelOpts(is_show=False),
+        )
 
 
-        c.add_control_panel(navigation_control_opts=opts.BMapNavigationControlOpts(offset_height=30),
-                            scale_control_opts=opts.BMapScaleControlOpts(),
-                            )
-        return c
+    c.add_control_panel(navigation_control_opts=opts.BMapNavigationControlOpts(offset_height=30),
+                        scale_control_opts=opts.BMapScaleControlOpts(),
+                        )
+    return c
 
+def draw_heatmap(index_lngLat, index_value, title='', width="1000px", height="600px"):
     #可视化
-    geo = bmap_heatmap()
+    geo = bmap_heatmap(index_lngLat, index_value, title=title, width="1000px", height="600px")
     geo.render( 'heat_bmap.html')
 
 
 if __name__ == '__main__':
-    data_file = "D:/CCF2019/data/selected_data/" + "DAY_WEEKDAY_0920" + ".csv"  # 选择数据======================
-    date_imterval = ['2017-09-20', '2017-09-20']  #  选择时间===========================
-    time_interval = [17, 19]  #  选择时间===========================
+    data_file = "D:/CCF2019/data/selected_data/" + "DAY_WEEKEND_1014" + ".csv"  # 选择数据======================
+    date_imterval = ['2017-10-14', '2017-10-14']  #  选择时间===========================
+    time_interval = [22, 24]  #  选择时间===========================
+    title = "10/14 周六 22:00-24:00"   # 更改title====================
 
     df = load_data_of(file=data_file,
                       dates=date_imterval, time_interval=time_interval,
@@ -116,21 +118,21 @@ if __name__ == '__main__':
     print(df.shape)
     print(df.columns)
 
-    # ## 需要对经纬度坐标进行一下纠偏
-    # df['starting_lng'] = df.apply(lambda row: gcj02_to_bd09(row['starting_lng'], row['starting_lat'])[0], axis=1)
-    # df['starting_lat'] = df.apply(lambda row: gcj02_to_bd09(row['starting_lng'], row['starting_lat'])[1], axis=1)
-    # df['dest_lng'] = df.apply(lambda row: gcj02_to_bd09(row['dest_lng'], row['dest_lat'])[0], axis=1)
-    # df['dest_lat'] = df.apply(lambda row: gcj02_to_bd09(row['dest_lng'], row['dest_lat'])[1], axis=1)
-    # # print(df.head())
+    ## 需要对经纬度坐标进行一下纠偏
+    df['starting_lng'] = df.apply(lambda row: gcj02_to_bd09(row['starting_lng'], row['starting_lat'])[0], axis=1)
+    df['starting_lat'] = df.apply(lambda row: gcj02_to_bd09(row['starting_lng'], row['starting_lat'])[1], axis=1)
+    df['dest_lng'] = df.apply(lambda row: gcj02_to_bd09(row['dest_lng'], row['dest_lat'])[0], axis=1)
+    df['dest_lat'] = df.apply(lambda row: gcj02_to_bd09(row['dest_lng'], row['dest_lat'])[1], axis=1)
+    # print(df.head())
 
 
-    # # df = get_datda_near(df, position='海口美兰机场', key='ARRIVE')
-    # # print(df.shape)
+    # df = get_datda_near(df, position='海口美兰机场', key='ARRIVE')
+    # print(df.shape)
 
-    # # 生成各位置对应index
-    # position_dict = get_index_of_postion(df)
+    # 生成各位置对应index
+    position_dict = get_index_of_postion(df)
 
-    # # 统计各位置分别的出发数量和到达数量
-    # departure_count, arrive_count = get_position_count(df)
-    # index_value = [departure_count, arrive_count]
-    # draw_heatmap(position_dict, index_value)
+    # 统计各位置分别的出发数量和到达数量
+    departure_count, arrive_count = get_position_count(df)
+    index_value = [departure_count, arrive_count]
+    draw_heatmap(position_dict, index_value, title=title)

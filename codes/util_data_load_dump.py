@@ -79,9 +79,9 @@ def select_df_of(df, dates=None, time_interval=None):
     这里是根据读取的df的时间区间直接提取，没有做时间的矫正
     '''
     if dates == None:
-        dates = ['2017-05-01', '2017-10-31']
+        dates = ['2017-05-01', '2017-10-31'] # 这代表包含10月31号
     if time_interval == None:
-        time_interval = [0,24]
+        time_interval = [0,24] # 这代表0到24时之间的不包含24
 
     date_begin = datetime.datetime.strptime(dates[0], '%Y-%m-%d')
     date_end = datetime.datetime.strptime(dates[1], '%Y-%m-%d') + datetime.timedelta(days=1)  # 到之后一天的0点
@@ -96,7 +96,7 @@ def select_df_of(df, dates=None, time_interval=None):
     df = df[(df['departure_time'] >= date_begin) & (df['departure_time'] < date_end)]
     # 再抽取对应的时间段的
     df['departure_time_hour'] = df['departure_time'].apply(lambda x: x.hour)
-    df = df[(df['departure_time_hour'] >= time_begin) & (df['departure_time_hour'] < time_end)]
+    df = df[(df['departure_time_hour'] >= time_begin) & (df['departure_time_hour'] < time_end)]  # 小于这个时间的
     del df['departure_time_hour']
     return df
 

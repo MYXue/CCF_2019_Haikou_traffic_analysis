@@ -57,7 +57,6 @@ def gcj02_to_bd09(lng, lat):
     :param lat:火星坐标纬度
     :return: bd_lng, bd_lat
     """
-
     x_pi = 3.14159265358979324 * 3000.0 / 180.0
     z = math.sqrt(lng * lng + lat * lat) + 0.00002 * math.sin(lat * x_pi)
     theta = math.atan2(lat, lng) + 0.000003 * math.cos(lng * x_pi)

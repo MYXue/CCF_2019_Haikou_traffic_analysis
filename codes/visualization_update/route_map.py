@@ -10,7 +10,7 @@ sys.path.append('../')
 from util_data_load_dump import load_data_of, get_datda_near
 import json
 from crawl_routes import get_route_list
-
+from data_statistic import gcj02_to_bd09
 from pyecharts.charts import BMap
 from pyecharts import options as opts
 from pyecharts.globals import BMapType, ChartType, SymbolType
@@ -24,16 +24,16 @@ def make_route_from(df):
         departure = [row['starting_lng'], row['starting_lat']]
         arrive = [row['dest_lng'], row['dest_lat']]
         a_route = get_route_list(departure, arrive)
-        taix_lines.append({"coords":a_route,"lineStyle":{"normal":{"color":"rgba(223,90,90,1)"}}})
+        taix_lines.append({"coords":a_route,"lineStyle":{"normal":{"color":"rgba(223,90,90,0.1)"}}})
     return taix_lines
 
 def draw_route_map(taix_lines):
     def bmap_route_map() -> BMap:
         c = (
-            BMap(init_opts = opts.InitOpts(theme = "white", width="800px", height="600px"))
+            BMap(init_opts = opts.InitOpts(theme = "white", width="1000px", height="600px"))
             .add_schema(baidu_ak=Baidu_AK, center=[110.3131940000, 20.0274250000], zoom=13)  #缩放比例12-14之间可行
             .set_global_opts(
-                title_opts=opts.TitleOpts(title="09/20 17:30-17:31"),  # 更改title====================
+                title_opts=opts.TitleOpts(title="09/20 17:30-17:35"),  # 更改title====================
                 visualmap_opts=opts.VisualMapOpts(is_show=False),
             )
         )
@@ -69,8 +69,8 @@ if __name__ == '__main__':
                       dates=date_imterval, time_interval=time_interval,
                       columns=['order_id', 'departure_time', 'arrive_time', 'dest_lng', 'dest_lat', 'starting_lng', 'starting_lat','normal_time'])
 
-    print(df.shape)
-    df = df[(df['departure_time'] >=  datetime.datetime(2017, 9, 20, 17, 30, 0)) & (df['departure_time'] < datetime.datetime(2017, 9, 20, 17, 31, 0))]
+    print(df.shape) #  选择时间===========================
+    df = df[(df['departure_time'] >=  datetime.datetime(2017, 9, 20, 17, 30, 0)) & (df['departure_time'] < datetime.datetime(2017, 9, 20, 17, 36, 0))]
     print(df.shape)
 
     ## 需要对经纬度坐标进行一下纠偏

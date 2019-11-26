@@ -52,7 +52,7 @@ def get_diff_poi_index(df):
 def draw_heatmap(index_lngLat, index_value):
     def bmap_heatmap() -> BMap:
         c = (
-            BMap(init_opts = opts.InitOpts(theme = "white", width="800px", height="600px"))
+            BMap(init_opts = opts.InitOpts(theme = "white", width="1000px", height="600px"))
             .add_schema(baidu_ak=Baidu_AK, center=[110.3131940000, 20.0274250000], zoom=13)  #缩放比例12-14之间可行
             .set_global_opts(
                 title_opts=opts.TitleOpts(title="POI分布"),  # 更改title====================

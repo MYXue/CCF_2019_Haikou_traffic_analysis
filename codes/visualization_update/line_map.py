@@ -8,6 +8,7 @@ pyecharts 连线图
 import sys
 sys.path.append('../')
 from util_data_load_dump import load_data_of, get_datda_near
+from data_statistic import gcj02_to_bd09
 import json
 
 from pyecharts.charts import BMap
@@ -37,10 +38,10 @@ def make_value(index_lngLat):
 def draw_linemap(index_lngLat, index_value, route_pair):
     def bmap_linemap() -> BMap:
         c = (
-            BMap(init_opts = opts.InitOpts(theme = "white", width="800px", height="600px"))
+            BMap(init_opts = opts.InitOpts(theme = "white", width="1000px", height="600px"))
             .add_schema(baidu_ak=Baidu_AK, center=[110.3131940000, 20.0274250000], zoom=13)  #缩放比例12-14之间可行
             .set_global_opts(
-                title_opts=opts.TitleOpts(title="09/20 工作日 机场到达"),  # 更改title====================
+                title_opts=opts.TitleOpts(title="10/01 国庆节 机场出发"),  # 更改title====================
                 visualmap_opts=opts.VisualMapOpts(),
             )
         )
@@ -60,13 +61,13 @@ def draw_linemap(index_lngLat, index_value, route_pair):
 
         # 增加连线图
         c.add(
-            "出行起始位置",
+            "行程起始-终止位置",
             route_pair,
             type_=ChartType.LINES,
             is_large=True,
             large_threshold=100,
             effect_opts=opts.EffectOpts(
-                symbol=SymbolType.ARROW, symbol_size=3, color="blue"
+                symbol=SymbolType.ARROW, symbol_size=5, color="blue"
             ),
             linestyle_opts=opts.LineStyleOpts(curve=0.1, opacity=0.7),
         )
@@ -83,8 +84,8 @@ def draw_linemap(index_lngLat, index_value, route_pair):
 
 
 if __name__ == '__main__':
-    data_file = "D:/CCF2019/data/selected_data/" + "DAY_WEEKDAY_0920" + ".csv"  # 选择数据======================
-    date_imterval = ['2017-09-20', '2017-09-20']  #  选择时间===========================
+    data_file = "D:/CCF2019/data/selected_data/" + "WEEK_10_1" + ".csv"  # 选择数据======================
+    date_imterval = ['2017-10-01', '2017-10-01']  #  选择时间===========================
     time_interval = [0, 24]  #  选择时间===========================
 
     df = load_data_of(file=data_file,
@@ -93,7 +94,7 @@ if __name__ == '__main__':
     # print(df)
     print(df.shape)
 
-    df = get_datda_near(df, position='海口美兰机场', key='ARRIVE')
+    df = get_datda_near(df, position='海口美兰机场', key='DEPARTURE')
     print(df.shape)
 
     ## 需要对经纬度坐标进行一下纠偏
